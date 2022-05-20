@@ -9,6 +9,7 @@ Leyla-DrawFlow/[Bb]uild/
 Leyla-DrawFlow/[Bb]uilds/
 Leyla-DrawFlow/[Ll]ogs/
 Leyla-DrawFlow/[Mm]emoryCaptures/
+Leyla-DrawFlow/[Bb]uilds/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !Leyla-DrawFlow/[Aa]ssets/**/*.meta

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Line : MonoBehaviour
 {
     public float preferredPointsDistance = 0.1f;
+    public float linePower = 1f;
     [HideInInspector] public List<Vector2> inputPositions { get; set; }// points of the drawing line
     [HideInInspector] public List<float> timeIntervals { get; set; } // time interval between each point    
     [HideInInspector] public float lastDrawnTime { get; set; }
@@ -12,7 +13,6 @@ public class Line : MonoBehaviour
 
     private LineRenderer lineRenderer;
     private EdgeCollider2D edgeCollider2D;
-
     private Vector2 previousPoint; // we keep last point position to know where to put the next point on our line in continueLineFlow function        
 
     private void Start()
@@ -102,7 +102,7 @@ public class Line : MonoBehaviour
         {
             lineRenderer.SetPosition(i, inputPositions[i]);
         }
-        edgeCollider2D.points = inputPositions.ToArray();        
+        edgeCollider2D.points = inputPositions.ToArray();
     }
 
     // check whether we have a point in screen or not
@@ -129,5 +129,18 @@ public class Line : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Debug.Log($"Trigger, Tag:{other.gameObject.tag}");
+        if (other.gameObject.tag == "Obstacle")
+        {
+            ObjectBehaviour behaviour;
+            if (other.TryGetComponent<ObjectBehaviour>(out behaviour))
+            {
+                behaviour.TakeDamage(linePower);
+            }
+        }
     }
 }

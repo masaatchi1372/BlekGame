@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8647264693760950368}
   m_Layer: 0
   m_Name: Line
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -79,7 +79,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 0.2
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -93,8 +93,8 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.43333858
-        value: 0.47143117
+        time: 0.40524715
+        value: 0.63085115
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -184,4 +184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad416b3c16b54a658166268270d76de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preferredPointsDistance: 0.1
+  linePower: 1
   lastTime: 0
