@@ -6,8 +6,10 @@ public class Route : MonoBehaviour
 {
     public float speed = 0.5f;
     public GameObject followee;
+    private ObjectBehaviour followeeBehaviour;
 
     private Transform[] controlPoints;
+    private Dictionary<Vector3, Vector3> cachePositions;
     private int degree;
     private float tInBezierCurveFormula = 0f;
     private bool coroutineAllowed;
@@ -17,6 +19,12 @@ public class Route : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        cachePositions = new Dictionary<Vector3, Vector3>();
+        if (followee != null)
+        {
+            followeeBehaviour = followee.GetComponent<ObjectBehaviour>() as BugBehaviour;
+        }
+
         coroutineAllowed = true;
 
         degree = transform.childCount;
@@ -54,9 +62,12 @@ public class Route : MonoBehaviour
         {
             tInBezierCurveFormula += Time.deltaTime * speed;
             // calculate based on the time of the system, where should the followee be now
-            if (followee != null)
+            if (followee != null && followeeBehaviour != null)
             {
-                followee.transform.position = BezierCurvePointPosition(tInBezierCurveFormula, 0, degree - 1);
+                Vector3 newPosition = BezierCurvePointPosition(tInBezierCurveFormula, 0, degree - 1);
+
+                // tell followee to Move
+                followeeBehaviour.Move(newPosition);
             }
 
             yield return new WaitForEndOfFrame();
@@ -77,7 +88,7 @@ public class Route : MonoBehaviour
             return controlPoints[endingPoint].position;
         }
         else
-        {
+        {            
             return (1 - t) * BezierCurvePointPosition(t, startingPoint, endingPoint - 1) + t * BezierCurvePointPosition(t, startingPoint + 1, endingPoint);
         }
     }

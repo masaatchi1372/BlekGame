@@ -6,5 +6,5 @@ public abstract class ObjectBehaviour : MonoBehaviour
 {
     public abstract bool TakeDamage(float damage);
     public abstract bool Die();
-    public abstract void Move(float deltaX, float deltaY);
+    public abstract void Move(Vector3 position);
 }

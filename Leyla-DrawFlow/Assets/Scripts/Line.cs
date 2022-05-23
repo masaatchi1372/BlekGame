@@ -133,7 +133,7 @@ public class Line : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Debug.Log($"Trigger, Tag:{other.gameObject.tag}");
+        Debug.Log($"Trigger, Tag:{other.gameObject.tag}");
         if (other.gameObject.tag == "Obstacle")
         {
             ObjectBehaviour behaviour;

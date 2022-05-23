@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
+// [RequireComponent(typeof(Collider))]
 public class BugBehaviour : ObjectBehaviour
 {
     public float movementSpeedFactor = 1f;
@@ -24,6 +24,10 @@ public class BugBehaviour : ObjectBehaviour
             health.maxHealth = maxHealth;
             health.minHealth = minHealth;
             health.health = maxHealth;
+        }
+        else
+        {
+            Debug.LogError("The bug hasn't any health component");
         }
     }
 
@@ -64,21 +68,20 @@ public class BugBehaviour : ObjectBehaviour
     /// </summary>
     void Update()
     {
-        Move(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+
     }
 
     /// <summary>
     /// Simple movement based on delta x and delta y on screen
     /// </summary>
-    public override void Move(float dX, float dY)
-    {        
-        return;
-        
-        // move the object
-        transform.position = Vector3.Lerp(transform.position, new Vector3(dX, dY, 0), movementSpeedFactor * Time.deltaTime);
+    public override void Move(Vector3 position)
+    {
+        // rotate the object towards the movement direction
+        Vector3 direction = (position - transform.position).normalized;
+        float angle = Vector3.SignedAngle(new Vector3(-1, 0, 0), direction, Vector3.forward);
+        transform.rotation = Quaternion.Euler(0, 0, angle);
 
-        // rotate the object
-        Quaternion toRotate = Quaternion.LookRotation(Vector3.forward, new Vector2(dX,dY).normalized);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotate, rotationSpeedFactor * Time.deltaTime);
+        // move the object
+        transform.position = Vector3.Lerp(transform.position, position, movementSpeedFactor * Time.deltaTime);
     }
 }
