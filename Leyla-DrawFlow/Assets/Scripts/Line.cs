@@ -7,25 +7,32 @@ public class Line : MonoBehaviour
     #region HEADER LINE PROPERTIES
     [Space(10)]
     [Header("Line Properties")]
+    [Space(3)]
     #endregion
+    [Tooltip("The prefab to put on the head of the line")]
+    public GameObject lineHeadPrefab;
     [Tooltip("The preferred distance between each point on the line")]
     public float preferredPointsDistance = 0.1f;
     public float linePower = 1f;
     [Tooltip("How many points on the line will be visible. Set to Zero to draw all the line")]
     public int lineLengthInPoints = 10;
+    [Tooltip("seconds interval to remove one point from the line when destroying it")]
+    public float lineRemovalSpeed = 0.01f;
 
     [HideInInspector] public List<Vector2> inputPositions { get; set; }// points of the drawing line
     [HideInInspector] public List<float> timeIntervals { get; set; } // time interval between each point    
     [HideInInspector] public float lastDrawnTime { get; set; }
     [HideInInspector] public float lastTime = 0f;
+    [HideInInspector] public float lastPointRemovalTime = 0f;
+    [HideInInspector] public bool shouldDestroy; // determine if we should destroy the line
 
     private LineRenderer lineRenderer;
     private EdgeCollider2D edgeCollider2D;
+    private GameObject lineHead;
     private Vector2 previousPoint; // we keep last point position to know where to put the next point on our line in continueLineFlow function        
 
     private void Start()
     {
-
         inputPositions = new List<Vector2>();
         timeIntervals = new List<float>();
 
@@ -52,6 +59,12 @@ public class Line : MonoBehaviour
 
         // updating edgeCollider on out LinePrefab
         edgeCollider2D.points = inputPositions.ToArray();
+
+        // creating the line head
+        if (lineHeadPrefab != null)
+        {
+            lineHead = Instantiate(lineHeadPrefab, inputPositions[0], Quaternion.identity);
+        }
     }
 
     // updating our lines positions and adding new points
@@ -79,6 +92,28 @@ public class Line : MonoBehaviour
         }
 
         // update the line renderer and edge collider
+        UpdateLineRenderer();
+    }
+
+    // each this function is called, it'll remove one point from the beginning of the line
+    public void RemoveFirstPoint()
+    {
+        if (inputPositions.Count <= lineRenderer.positionCount) // just remove one of the points that are rendered
+        {
+            inputPositions.RemoveAt(0);
+            lineRenderer.positionCount--;
+            lastPointRemovalTime = Time.realtimeSinceStartup;
+        }
+        else // we have some points that are not rendered, so we would immediately delete them
+        {
+            // remove points that are not rendered
+            int tmp = inputPositions.Count;
+            for (int i = 0; i < tmp - lineRenderer.positionCount; i++)
+            {
+                inputPositions.RemoveAt(0);
+            }
+        }
+
         UpdateLineRenderer();
     }
 
@@ -153,6 +188,15 @@ public class Line : MonoBehaviour
             lineRenderer.SetPosition(i, inputPositions[inputPositions.Count - lineRenderer.positionCount + i]);
         }
 
+        // if there are still two points on the line, the head object should be aligned towards the line
+        if (lineRenderer.positionCount >= 2)
+        {
+            // ****** TO DO: direction of the line head            
+            Vector3 direction = (position - transform.position).normalized;
+            float angle = Vector3.SignedAngle(new Vector3(-1, 0, 0), direction, Vector3.forward);
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+
         // updating the edge collider with all the input positions
         edgeCollider2D.points = inputPositions.ToArray();
     }
@@ -167,6 +211,12 @@ public class Line : MonoBehaviour
             {
                 behaviour.TakeDamage(linePower);
             }
+
+            // first we disable the collider on the line
+            edgeCollider2D.enabled = false;
+
+            // the line should be destroyed
+            shouldDestroy = true;
         }
     }
 }

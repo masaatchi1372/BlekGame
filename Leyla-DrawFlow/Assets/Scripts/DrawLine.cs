@@ -87,13 +87,27 @@ public class DrawLine : MonoBehaviour
                 if (line != null)
                 {
                     Line lineComponent = line.GetComponent<Line>();
-                    // if there's still one point of the line which user can see (it's in the screen) we should continue the line flow
+
+                    // if there's still one point on the line which user can see (it's in the screen) we should continue the line flow
                     if (lineComponent.inputPositions.Count == 1 || !lineComponent.HasAtLeaseOnePointInScreen())
                     {
                         deletionQueue.Enqueue(line);
                         continue;
                     }
-                    lineComponent.ContinueLineFlow();
+
+                    // if we should destroy the line
+                    if (lineComponent.shouldDestroy)
+                    {
+                        // check the line points removal speed
+                        if (Time.realtimeSinceStartup - lineComponent.lastPointRemovalTime > lineComponent.lineRemovalSpeed)
+                        {
+                            lineComponent.RemoveFirstPoint();
+                        }
+                    }
+                    else // otherwise will continue the flow
+                    {
+                        lineComponent.ContinueLineFlow();
+                    }
                 }
             }
         }

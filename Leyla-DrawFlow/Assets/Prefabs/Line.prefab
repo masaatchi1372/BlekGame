@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5977152468758313169}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0010070801, y: 0.51400757, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -187,4 +187,7 @@ MonoBehaviour:
   preferredPointsDistance: 0.01
   linePower: 1
   lineLengthInPoints: 50
+  lineRemovalSpeed: 0.01
   lastTime: 0
+  lastPointRemovalTime: 0
+  shouldDestroy: 0
