@@ -184,6 +184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad416b3c16b54a658166268270d76de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  preferredPointsDistance: 0.1
+  preferredPointsDistance: 0.01
   linePower: 1
   lastTime: 0
