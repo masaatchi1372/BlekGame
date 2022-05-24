@@ -22,7 +22,7 @@ public class Route : MonoBehaviour
         cachePositions = new Dictionary<Vector3, Vector3>();
         if (followee != null)
         {
-            followeeBehaviour = followee.GetComponent<ObjectBehaviour>() as BugBehaviour;
+            followeeBehaviour = followee.GetComponent<ObjectBehaviour>();
         }
 
         coroutineAllowed = true;
