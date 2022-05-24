@@ -102,8 +102,8 @@ LineRenderer:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 1
-        value: 0.24285507
+        time: 0.99438477
+        value: 0.38778305
         inSlope: 0.39130443
         outSlope: 0.39130443
         tangentMode: 0
@@ -184,6 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad416b3c16b54a658166268270d76de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  preferredPointsDistance: 0.1
+  preferredPointsDistance: 0.01
   linePower: 1
+  lineLengthInPoints: 50
   lastTime: 0

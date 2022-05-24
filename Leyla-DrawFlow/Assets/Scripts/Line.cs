@@ -4,8 +4,16 @@ using UnityEngine;
 
 public class Line : MonoBehaviour
 {
+    #region HEADER LINE PROPERTIES
+    [Space(10)]
+    [Header("Line Properties")]
+    #endregion
+    [Tooltip("The preferred distance between each point on the line")]
     public float preferredPointsDistance = 0.1f;
     public float linePower = 1f;
+    [Tooltip("How many points on the line will be visible. Set to Zero to draw all the line")]
+    public int lineLengthInPoints = 10;
+
     [HideInInspector] public List<Vector2> inputPositions { get; set; }// points of the drawing line
     [HideInInspector] public List<float> timeIntervals { get; set; } // time interval between each point    
     [HideInInspector] public float lastDrawnTime { get; set; }
@@ -56,12 +64,22 @@ public class Line : MonoBehaviour
         timeIntervals.Add(Time.realtimeSinceStartup - lastTime);
         lastTime = Time.realtimeSinceStartup;
 
-        // we have a new member for our lineRenderer
-        lineRenderer.positionCount++;
-        lineRenderer.SetPosition(lineRenderer.positionCount - 1, newInput);
+        if (inputPositions.Count <= lineLengthInPoints || lineLengthInPoints == 0)
+        {
+            // we have a new member for our lineRenderer
+            lineRenderer.positionCount++;
+            lineRenderer.SetPosition(lineRenderer.positionCount - 1, newInput);
+        }
+        else // we reached the line length so we should remove the last point and add the new one
+        {
+            for (int i = 1; i <= preferredPointsDistance; i++)
+            {
+                lineRenderer.SetPosition(lineRenderer.positionCount - i, inputPositions[inputPositions.Count - i]);
+            }
+        }
 
-        // updating edgeCollider on out LinePrefab
-        edgeCollider2D.points = inputPositions.ToArray();
+        // update the line renderer and edge collider
+        UpdateLineRenderer();
     }
 
     // based on the delta positions and times between each vertex in InputPosition we will continue its path
@@ -85,7 +103,7 @@ public class Line : MonoBehaviour
         inputPositions.RemoveAt(0);
 
         // adding the delta time of the new drawn point
-        timeIntervals.Add(Time.realtimeSinceStartup - lastDrawnTime);
+        timeIntervals.Add(timeIntervals[0]);
 
         // removing the first point time interval after moving it
         timeIntervals.RemoveAt(0);
@@ -96,13 +114,8 @@ public class Line : MonoBehaviour
         // keeping the first point position for next step
         previousPoint = firstLinePoint;
 
-
-        // updating LineRenderer and edgeCollider on out LinePrefab
-        for (int i = 0; i < inputPositions.Count; i++)
-        {
-            lineRenderer.SetPosition(i, inputPositions[i]);
-        }
-        edgeCollider2D.points = inputPositions.ToArray();
+        // update the line renderer and edge collider
+        UpdateLineRenderer();
     }
 
     // check whether we have a point in screen or not
@@ -129,6 +142,19 @@ public class Line : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void UpdateLineRenderer()
+    {
+        // updating LineRenderer on our LinePrefab
+        // remember we just have to set position on the visible points not all the inputPositions
+        for (int i = 0; i < lineRenderer.positionCount; i++)
+        {
+            lineRenderer.SetPosition(i, inputPositions[inputPositions.Count - lineRenderer.positionCount + i]);
+        }
+
+        // updating the edge collider with all the input positions
+        edgeCollider2D.points = inputPositions.ToArray();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
