@@ -80,7 +80,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.2
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -187,7 +187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineHeadPrefab: {fileID: 4085328676873557299, guid: f0197644e8322476cb0d6e9867695550,
     type: 3}
-  preferredPointsDistance: 0.005
+  preferredPointsDistance: 0.05
   lineLengthInPoints: 20
   lineRemovalSpeed: 0.01
   lineHeadRotationSpeed: 0.6

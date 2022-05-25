@@ -100,7 +100,7 @@ public class DrawLine : MonoBehaviour
                     Line lineComponent = line.GetComponent<Line>();
 
                     // if there's still one point on the line which user can see (it's in the screen) we should continue the line flow
-                    if (lineComponent.inputPositions.Count == 1 || !lineComponent.HasAtLeaseOnePointInScreen())
+                    if (lineComponent && (lineComponent.inputPositions.Count == 1 || !lineComponent.HasAtLeaseOnePointInScreen()))
                     {
                         deletionQueue.Enqueue(line);
                         continue;

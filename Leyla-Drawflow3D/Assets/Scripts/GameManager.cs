@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Enemies in the level")]
     [Tooltip("Enemies that user should destroy in this level")]
-    [SerializeField] public List<ObjectBehaviour> enemies;
+    [SerializeField] public List<BugBehaviour> bugs;
 
     private bool isWin = false;
 
@@ -22,30 +22,27 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // we defeated all enemies
         if (CheckEnemyCounts() == 0 && isWin == false) // we won
         {                    
-            isWin = true;
-            // int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-            // Debug.Log($"{SceneManager.sceneCountInBuildSettings}, {nextSceneIndex}");
-            // if (SceneManager.sceneCountInBuildSettings > nextSceneIndex)
-            // {
-            //     SceneManager.LoadScene(nextSceneIndex);
-            // }
+            int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+            Debug.Log($"{SceneManager.sceneCountInBuildSettings}, {nextSceneIndex}");
+            if (SceneManager.sceneCountInBuildSettings > nextSceneIndex)
+            {
+                SceneManager.LoadScene(nextSceneIndex);
+            }
         }
     }
 
     private int CheckEnemyCounts()
     {
-        int enemyCounts = 0;
-        foreach (ObjectBehaviour bug in enemies)
+        int EnemyCounts = 0;
+        foreach (BugBehaviour bug in bugs)
         {
             if (bug != null) // we found a bug
             {
-                enemyCounts++;
+                EnemyCounts++;
             }
         }
-
-        return enemyCounts;
+        return EnemyCounts;
     }
 }
