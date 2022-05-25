@@ -68,6 +68,11 @@ public class DrawLine : MonoBehaviour
 
             if (currentLine != null)
             {
+                // now we activate the edgecollider on the line
+                EdgeCollider2D edgeCollider2D;
+                currentLine.TryGetComponent<EdgeCollider2D>(out edgeCollider2D);
+                edgeCollider2D.enabled = true;
+
                 // drawing is finished and we add the line to the lineList
                 lineGameObjectsList.Add(currentLine);
 
@@ -87,13 +92,27 @@ public class DrawLine : MonoBehaviour
                 if (line != null)
                 {
                     Line lineComponent = line.GetComponent<Line>();
-                    // if there's still one point of the line which user can see (it's in the screen) we should continue the line flow
+
+                    // if there's still one point on the line which user can see (it's in the screen) we should continue the line flow
                     if (lineComponent.inputPositions.Count == 1 || !lineComponent.HasAtLeaseOnePointInScreen())
                     {
                         deletionQueue.Enqueue(line);
                         continue;
                     }
-                    lineComponent.ContinueLineFlow();
+
+                    // if we should destroy the line
+                    if (lineComponent.shouldDestroy)
+                    {
+                        // check the line points removal speed
+                        if (Time.realtimeSinceStartup - lineComponent.lastPointRemovalTime > lineComponent.lineRemovalSpeed)
+                        {
+                            lineComponent.RemoveFirstPoint();
+                        }
+                    }
+                    else // otherwise will continue the flow
+                    {
+                        lineComponent.ContinueLineFlow();
+                    }
                 }
             }
         }
@@ -106,6 +125,11 @@ public class DrawLine : MonoBehaviour
     {
         // initiating current line with our prefab with no vertex on its lineRenderer
         currentLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity);
+
+        // now we activate the edgecollider on the line
+        EdgeCollider2D edgeCollider2D;
+        currentLine.TryGetComponent<EdgeCollider2D>(out edgeCollider2D);
+        edgeCollider2D.enabled = false;
     }
 
     private void ClearDeletionQueue()

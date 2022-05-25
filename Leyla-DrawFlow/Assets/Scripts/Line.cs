@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,24 +8,33 @@ public class Line : MonoBehaviour
     #region HEADER LINE PROPERTIES
     [Space(10)]
     [Header("Line Properties")]
+    [Space(3)]
     #endregion
+    [Tooltip("The prefab to put on the head of the line")]
+    public GameObject lineHeadPrefab;
     [Tooltip("The preferred distance between each point on the line")]
     public float preferredPointsDistance = 0.1f;
     [Tooltip("How many points on the line will be visible. Set to Zero to draw all the line")]
     public int lineLengthInPoints = 10;
+    [Tooltip("seconds interval to remove one point from the line when destroying it")]
+    public float lineRemovalSpeed = 0.01f;
+    [Tooltip("How fast should the line header rotate towards the direction of the line")]
+    public float lineHeadRotationSpeed = 1f;
 
     [HideInInspector] public List<Vector2> inputPositions { get; set; }// points of the drawing line
     [HideInInspector] public List<float> timeIntervals { get; set; } // time interval between each point    
     [HideInInspector] public float lastDrawnTime { get; set; }
     [HideInInspector] public float lastTime = 0f;
+    [HideInInspector] public float lastPointRemovalTime = 0f;
+    [HideInInspector] public bool shouldDestroy; // determine if we should destroy the line
 
     private LineRenderer lineRenderer;
     private EdgeCollider2D edgeCollider2D;
+    private GameObject lineHead;
     private Vector2 previousPoint; // we keep last point position to know where to put the next point on our line in continueLineFlow function        
 
     private void Start()
     {
-
         inputPositions = new List<Vector2>();
         timeIntervals = new List<float>();
 
@@ -51,6 +61,17 @@ public class Line : MonoBehaviour
 
         // updating edgeCollider on out LinePrefab
         edgeCollider2D.points = inputPositions.ToArray();
+
+        // creating the line head
+        if (lineHeadPrefab != null)
+        {
+            lineHead = Instantiate(lineHeadPrefab, inputPositions[0], Quaternion.identity, gameObject.transform);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        UpdateLineHeader();
     }
 
     // updating our lines positions and adding new points
@@ -78,6 +99,34 @@ public class Line : MonoBehaviour
         }
 
         // update the line renderer and edge collider
+        UpdateLineRenderer();
+    }
+
+    // each this function is called, it'll remove one point from the beginning of the line
+    public void RemoveFirstPoint()
+    {
+        // first we destroy our line header
+        if (lineHead != null)
+        {
+            Destroy(lineHead);
+        }
+
+        if (inputPositions.Count <= lineRenderer.positionCount) // just remove one of the points that are rendered
+        {
+            inputPositions.RemoveAt(0);
+            lineRenderer.positionCount--;
+            lastPointRemovalTime = Time.realtimeSinceStartup;
+        }
+        else // we have some points that are not rendered, so we would immediately delete them
+        {
+            // remove points that are not rendered
+            int tmp = inputPositions.Count;
+            for (int i = 0; i < tmp - lineRenderer.positionCount; i++)
+            {
+                inputPositions.RemoveAt(0);
+            }
+        }
+
         UpdateLineRenderer();
     }
 
@@ -152,20 +201,59 @@ public class Line : MonoBehaviour
             lineRenderer.SetPosition(i, inputPositions[inputPositions.Count - lineRenderer.positionCount + i]);
         }
 
+        UpdateLineHeader();
+
         // updating the edge collider with all the input positions
         edgeCollider2D.points = inputPositions.ToArray();
     }
 
+    private void UpdateLineHeader()
+    {
+        if (lineHead == null)
+        {
+            return;
+        }
+
+        // if there are still two points on the line, the head object should be aligned towards the line
+        if (inputPositions.Count >= 2 && HasAtLeaseOnePointInScreen())
+        {
+            // calculating the rotation for line head
+            int tmpSize = inputPositions.Count;
+            Vector3 direction = (inputPositions[tmpSize - 1] - inputPositions[tmpSize - 2]).normalized;
+            float angle = Vector3.SignedAngle(new Vector3(0, 1, 0), direction, Vector3.forward);
+
+            // setting position and rotation of line head
+            lineHead.transform.rotation = Quaternion.Slerp(lineHead.transform.rotation, Quaternion.Euler(0, 0, angle), lineHeadRotationSpeed);
+            lineHead.transform.position = inputPositions[tmpSize - 1];
+        }
+        else
+        {
+            // line head should be destroyed because we don't have more than 2 points
+            Destroy(lineHead);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log($"Trigger, Tag:{other.gameObject.tag}");
-        if (other.gameObject.tag == "Obstacle")
-        {
-            ObjectBehaviour behaviour;
-            if (other.TryGetComponent<ObjectBehaviour>(out behaviour))
-            {
+        // if we hit ANYTHING we will disable the collider and line should be destroyed
+        edgeCollider2D.enabled = false;
+        shouldDestroy = true;
 
-            }
+        switch (other.gameObject.tag)
+        {
+            case "Obstacle":
+                break;
+            case "Enemy":
+                // we perform an attack if there's any attacking component on our line
+                Attack attack;
+                if (TryGetComponent<Attack>(out attack))
+                {
+                    attack.DealDamage(other);
+                }
+                break;
+
+            default:
+                break;
         }
     }
 }
