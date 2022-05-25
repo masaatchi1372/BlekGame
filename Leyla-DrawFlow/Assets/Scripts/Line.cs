@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,11 +14,12 @@ public class Line : MonoBehaviour
     public GameObject lineHeadPrefab;
     [Tooltip("The preferred distance between each point on the line")]
     public float preferredPointsDistance = 0.1f;
-    public float linePower = 1f;
     [Tooltip("How many points on the line will be visible. Set to Zero to draw all the line")]
     public int lineLengthInPoints = 10;
     [Tooltip("seconds interval to remove one point from the line when destroying it")]
     public float lineRemovalSpeed = 0.01f;
+    [Tooltip("How fast should the line header rotate towards the direction of the line")]
+    public float lineHeadRotationSpeed = 1f;
 
     [HideInInspector] public List<Vector2> inputPositions { get; set; }// points of the drawing line
     [HideInInspector] public List<float> timeIntervals { get; set; } // time interval between each point    
@@ -63,8 +65,13 @@ public class Line : MonoBehaviour
         // creating the line head
         if (lineHeadPrefab != null)
         {
-            lineHead = Instantiate(lineHeadPrefab, inputPositions[0], Quaternion.identity);
+            lineHead = Instantiate(lineHeadPrefab, inputPositions[0], Quaternion.identity, gameObject.transform);
         }
+    }
+
+    private void OnDestroy()
+    {
+        UpdateLineHeader();
     }
 
     // updating our lines positions and adding new points
@@ -98,6 +105,12 @@ public class Line : MonoBehaviour
     // each this function is called, it'll remove one point from the beginning of the line
     public void RemoveFirstPoint()
     {
+        // first we destroy our line header
+        if (lineHead != null)
+        {
+            Destroy(lineHead);
+        }
+
         if (inputPositions.Count <= lineRenderer.positionCount) // just remove one of the points that are rendered
         {
             inputPositions.RemoveAt(0);
@@ -188,35 +201,59 @@ public class Line : MonoBehaviour
             lineRenderer.SetPosition(i, inputPositions[inputPositions.Count - lineRenderer.positionCount + i]);
         }
 
-        // if there are still two points on the line, the head object should be aligned towards the line
-        if (lineRenderer.positionCount >= 2)
-        {
-            // ****** TO DO: direction of the line head            
-            Vector3 direction = (position - transform.position).normalized;
-            float angle = Vector3.SignedAngle(new Vector3(-1, 0, 0), direction, Vector3.forward);
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-        }
+        UpdateLineHeader();
 
         // updating the edge collider with all the input positions
         edgeCollider2D.points = inputPositions.ToArray();
     }
 
+    private void UpdateLineHeader()
+    {
+        if (lineHead == null)
+        {
+            return;
+        }
+
+        // if there are still two points on the line, the head object should be aligned towards the line
+        if (inputPositions.Count >= 2 && HasAtLeaseOnePointInScreen())
+        {
+            // calculating the rotation for line head
+            int tmpSize = inputPositions.Count;
+            Vector3 direction = (inputPositions[tmpSize - 1] - inputPositions[tmpSize - 2]).normalized;
+            float angle = Vector3.SignedAngle(new Vector3(0, 1, 0), direction, Vector3.forward);
+
+            // setting position and rotation of line head
+            lineHead.transform.rotation = Quaternion.Slerp(lineHead.transform.rotation, Quaternion.Euler(0, 0, angle), lineHeadRotationSpeed);
+            lineHead.transform.position = inputPositions[tmpSize - 1];
+        }
+        else
+        {
+            // line head should be destroyed because we don't have more than 2 points
+            Destroy(lineHead);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log($"Trigger, Tag:{other.gameObject.tag}");
-        if (other.gameObject.tag == "Obstacle")
+        // if we hit ANYTHING we will disable the collider and line should be destroyed
+        edgeCollider2D.enabled = false;
+        shouldDestroy = true;
+
+        switch (other.gameObject.tag)
         {
-            ObjectBehaviour behaviour;
-            if (other.TryGetComponent<ObjectBehaviour>(out behaviour))
-            {
-                behaviour.TakeDamage(linePower);
-            }
+            case "Obstacle":
+                break;
+            case "Enemy":
+                // we perform an attack if there's any attacking component on our line
+                Attack attack;
+                if (TryGetComponent<Attack>(out attack))
+                {
+                    attack.DealDamage(other);
+                }
+                break;
 
-            // first we disable the collider on the line
-            edgeCollider2D.enabled = false;
-
-            // the line should be destroyed
-            shouldDestroy = true;
+            default:
+                break;
         }
     }
 }

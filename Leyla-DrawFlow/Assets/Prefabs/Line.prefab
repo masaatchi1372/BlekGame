@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5977152468758313168}
   - component: {fileID: 3892423701972440365}
   - component: {fileID: 8647264693760950368}
+  - component: {fileID: 7798668567729454247}
   m_Layer: 0
   m_Name: Line
   m_TagString: Player
@@ -184,10 +185,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad416b3c16b54a658166268270d76de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lineHeadPrefab: {fileID: 4085328676873557299, guid: f0197644e8322476cb0d6e9867695550, type: 3}
   preferredPointsDistance: 0.01
-  linePower: 1
   lineLengthInPoints: 50
   lineRemovalSpeed: 0.01
+  lineHeadRotationSpeed: 0.6
   lastTime: 0
   lastPointRemovalTime: 0
   shouldDestroy: 0
+--- !u!114 &7798668567729454247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5977152468758313169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec85cca9a74e84aad9b8859382aa1d6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  power: 1

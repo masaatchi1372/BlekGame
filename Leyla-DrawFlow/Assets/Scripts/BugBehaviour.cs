@@ -6,7 +6,7 @@ using UnityEngine;
 public class BugBehaviour : ObjectBehaviour
 {
     public float movementSpeedFactor = 1f;
-    public float rotationSpeedFactor = 2f;
+    public float rotationSpeedFactor = 0.1f;
     public int maxHealth = 5;
     public int minHealth = 0;
     private Collider2D objCollider;
@@ -37,7 +37,6 @@ public class BugBehaviour : ObjectBehaviour
         if (health != null)
         {
             health.TakeDamage(damage);
-            Debug.Log($"healt:{health.health} , {damage}");
             if (health.health <= health.minHealth)
             {
                 Die();
@@ -49,7 +48,6 @@ public class BugBehaviour : ObjectBehaviour
         if (objCollider != null)
         {
             float tmpRatio = 0.8f;
-            Debug.Log($"downScale:{tmpRatio}");
             transform.localScale *= tmpRatio;
         }
 
@@ -58,7 +56,6 @@ public class BugBehaviour : ObjectBehaviour
 
     public override bool Die()
     {
-        Debug.Log("died");
         Destroy(gameObject);
         return true;
     }
@@ -79,7 +76,7 @@ public class BugBehaviour : ObjectBehaviour
         // rotate the object towards the movement direction
         Vector3 direction = (position - transform.position).normalized;
         float angle = Vector3.SignedAngle(new Vector3(-1, 0, 0), direction, Vector3.forward);
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, angle), rotationSpeedFactor);
 
         // move the object
         transform.position = Vector3.Lerp(transform.position, position, movementSpeedFactor * Time.deltaTime);
