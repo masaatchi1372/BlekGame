@@ -175,7 +175,7 @@ public class Line : MonoBehaviour
         for (int i = 0; i < inputPositions.Count; i++)
         {
             // check if the point is in the screen
-            if (new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(inputPositions[i])))
+            if (Camera.main != null && new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(inputPositions[i])))
             {
                 return true;
             }

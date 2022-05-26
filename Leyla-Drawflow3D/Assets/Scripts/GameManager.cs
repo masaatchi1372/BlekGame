@@ -24,12 +24,15 @@ public class GameManager : MonoBehaviour
     {
         if (CheckEnemyCounts() == 0 && isWin == false) // we won
         {                    
+            // we won
+            isWin = true;
+
             int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
             Debug.Log($"{SceneManager.sceneCountInBuildSettings}, {nextSceneIndex}");
             if (SceneManager.sceneCountInBuildSettings > nextSceneIndex)
             {
                 SceneManager.LoadScene(nextSceneIndex);
-            }
+            }            
         }
     }
 

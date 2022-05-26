@@ -228,6 +228,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 174214714}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &174214716 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -7494846876910417231, guid: d3fe41bc3928643eb8576519c65c1293,
+    type: 3}
+  m_PrefabInstance: {fileID: 174214714}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 174214715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18fb88445824947e4b87e73c0c553411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &209851207
 GameObject:
   m_ObjectHideFlags: 0
@@ -988,6 +1000,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1109128507}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1109128509 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -7494846876910417231, guid: d3fe41bc3928643eb8576519c65c1293,
+    type: 3}
+  m_PrefabInstance: {fileID: 1109128507}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109128508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18fb88445824947e4b87e73c0c553411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1153438569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,9 +1244,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6437614318291361139, guid: 6ad02fec3b55e4692aacb231a4851638,
         type: 3}
+      propertyPath: bugs.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6437614318291361139, guid: 6ad02fec3b55e4692aacb231a4851638,
+        type: 3}
       propertyPath: bugs.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 174214716}
+    - target: {fileID: 6437614318291361139, guid: 6ad02fec3b55e4692aacb231a4851638,
+        type: 3}
+      propertyPath: bugs.Array.data[1]
+      value: 
+      objectReference: {fileID: 1109128509}
     - target: {fileID: 6437614318852239757, guid: 6ad02fec3b55e4692aacb231a4851638,
         type: 3}
       propertyPath: linePrefab
