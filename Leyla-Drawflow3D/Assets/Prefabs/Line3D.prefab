@@ -188,7 +188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineHeadPrefab: {fileID: 9169954334807886738, guid: 000347f54437f4c13958b2017da9e632,
     type: 3}
-  preferredPointsDistance: 0.05
+  preferredPointsDistance: 0.01
   lineLengthInPoints: 20
   lineRemovalSpeed: 0.01
   lineHeadRotationSpeed: 0.6

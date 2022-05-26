@@ -32,25 +32,27 @@ public class Line : MonoBehaviour
     private EdgeCollider2D edgeCollider2D;
     private GameObject lineHead;
     private Vector3 previousPoint; // we keep last point position to know where to put the next point on our line in continueLineFlow function        
+    private Camera mainCam;
 
     private void Start()
     {
         inputPositions = new List<Vector3>();
         timeIntervals = new List<float>();
-
-        // getting components
-        lineRenderer = GetComponent<LineRenderer>();
-        edgeCollider2D = GetComponent<EdgeCollider2D>();
+        mainCam = Camera.main;
 
         // we should clear the inputPosition & timeIntervals array
         inputPositions.Clear();
         timeIntervals.Clear();
 
+        // getting components
+        lineRenderer = GetComponent<LineRenderer>();
+        edgeCollider2D = GetComponent<EdgeCollider2D>();
+
         // we add the starting point of user input
         // we should set the zero of mouse input to avoid future issues
         Vector3 tempInput = Input.mousePosition;
         tempInput.z = 1f;
-        inputPositions.Add(Camera.main.ScreenToWorldPoint(tempInput));
+        inputPositions.Add(mainCam.ScreenToWorldPoint(tempInput));
 
         // set the time Interval to zero, so the line would be continue as soon as possible
         timeIntervals.Add(0f);
@@ -175,7 +177,7 @@ public class Line : MonoBehaviour
         for (int i = 0; i < inputPositions.Count; i++)
         {
             // check if the point is in the screen
-            if (Camera.main != null && new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(inputPositions[i])))
+            if (mainCam != null && new Rect(0, 0, 1, 1).Contains(mainCam.WorldToViewportPoint(inputPositions[i])))
             {
                 return true;
             }
@@ -186,10 +188,21 @@ public class Line : MonoBehaviour
 
     public bool CanAddNewPoint(Vector3 here)
     {        
-        if (inputPositions.Count > 0 && Vector3.SqrMagnitude(here - inputPositions[inputPositions.Count - 1]) > preferredPointsDistance * preferredPointsDistance)
+        // cache inputPosition size
+        int arraySize = inputPositions.Count;
+        Debug.Log($"can Add? {arraySize}");
+        
+        // if don't have any points already, then we have accept the first point
+        if (arraySize == 0)
         {
             return true;
         }
+
+        if (Vector3.Distance(here, inputPositions[arraySize - 1]) > preferredPointsDistance)
+        {
+            return true;
+        }
+
         return false;
     }
 

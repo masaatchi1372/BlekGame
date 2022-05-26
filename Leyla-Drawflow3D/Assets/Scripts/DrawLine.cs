@@ -16,16 +16,25 @@ public class DrawLine : MonoBehaviour
     private GameObject currentLine;
     private List<GameObject> lineGameObjectsList;
     private Queue<GameObject> deletionQueue;
+    private Camera mainCam;
 
     private void Start()
     {
         // initiating
         lineGameObjectsList = new List<GameObject>();
         deletionQueue = new Queue<GameObject>();
+        mainCam = Camera.main;
     }
 
     void Update()
     {
+        // caching currentLine if one exist
+        Line currentLineComponent = null;
+        if (currentLine != null)
+        {
+            currentLineComponent = currentLine.GetComponent<Line>();
+        }
+        
         // on right mouse button all lines would be destroyed
         if (Input.GetMouseButtonDown(1))
         {
@@ -36,15 +45,9 @@ public class DrawLine : MonoBehaviour
             currentLine = null;
         }
 
-        // caching currentLine if one exist
-        Line currentLineComponent = null;
-        if (currentLine != null)
-        {
-            currentLineComponent = currentLine.GetComponent<Line>();
-        }
-
         // check for left mouse button or touch
-        if (Input.GetMouseButtonDown(0))
+        // we'll start a new line if one hasn't already in the scene
+        if (Input.GetMouseButtonDown(0) && currentLine == null)
         {
             // Initiating the line
             CreateLine();
@@ -56,7 +59,7 @@ public class DrawLine : MonoBehaviour
             // we should set the zero of mouse input to avoid future issues
             Vector3 tempInput = Input.mousePosition;
             tempInput.z = 1f;
-            tempInput = Camera.main.ScreenToWorldPoint(tempInput);
+            tempInput = mainCam.ScreenToWorldPoint(tempInput);
 
             // if point distance is enough, we'll add a new point to the currentLine
             if (currentLineComponent != null && currentLineComponent.CanAddNewPoint(tempInput))
@@ -68,7 +71,6 @@ public class DrawLine : MonoBehaviour
         // on release
         if (Input.GetMouseButtonUp(0))
         {
-
             if (currentLine != null)
             {
                 // now we activate the edgecollider on the line
@@ -98,9 +100,13 @@ public class DrawLine : MonoBehaviour
                 if (line != null)
                 {
                     Line lineComponent = line.GetComponent<Line>();
+                    if (lineComponent == null || lineComponent.inputPositions == null)
+                    {
+                        continue;
+                    }
 
                     // if there's still one point on the line which user can see (it's in the screen) we should continue the line flow
-                    if (lineComponent && (lineComponent.inputPositions.Count == 1 || !lineComponent.HasAtLeaseOnePointInScreen()))
+                    if (lineComponent.inputPositions.Count == 1 || !lineComponent.HasAtLeaseOnePointInScreen())
                     {
                         deletionQueue.Enqueue(line);
                         continue;

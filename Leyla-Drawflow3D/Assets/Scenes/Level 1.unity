@@ -382,7 +382,7 @@ Camera:
   far clip plane: 1000
   field of view: 75
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -791,12 +791,6 @@ PrefabInstance:
       propertyPath: bugs.Array.data[0]
       value: 
       objectReference: {fileID: 174214721}
-    - target: {fileID: 6437614318852239757, guid: 6ad02fec3b55e4692aacb231a4851638,
-        type: 3}
-      propertyPath: linePrefab
-      value: 
-      objectReference: {fileID: 5977152468758313169, guid: a3ab0ebe323ea4e8f8d7026a9893cb64,
-        type: 3}
     - target: {fileID: 8805862224123772861, guid: 6ad02fec3b55e4692aacb231a4851638,
         type: 3}
       propertyPath: m_Name
@@ -1062,7 +1056,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5830558479965908702
 Transform:
   m_ObjectHideFlags: 0
