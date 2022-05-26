@@ -124,15 +124,15 @@ public class Route : MonoBehaviour
         if (degree == 1)
         {
             pointPosition = controlPoints[degree - 1].position;
-            Gizmos.DrawSphere(pointPosition, 0.01f);
+            Gizmos.DrawSphere(pointPosition, 0.08f);
         }
         else
         {
 
-            for (float t = 0; t <= 1; t += 0.05f)
+            for (float t = 0; t <= 1; t += 0.04f)
             {
                 pointPosition = BezierCurvePointPosition(t, 0, degree - 1);
-                Gizmos.DrawSphere(pointPosition, 0.1f);
+                Gizmos.DrawSphere(pointPosition, 0.08f);
             }
 
         }
@@ -140,7 +140,7 @@ public class Route : MonoBehaviour
         // draw raw line between control points
         for (int i = 0; i < degree - 1; i++)
         {
-            Gizmos.DrawLine(new Vector2(controlPoints[i].position.x, controlPoints[i].position.y), new Vector2(controlPoints[i + 1].position.x, controlPoints[i + 1].position.y));
+            Gizmos.DrawLine(controlPoints[i].position, controlPoints[i + 1].position);
         }
 
     }
