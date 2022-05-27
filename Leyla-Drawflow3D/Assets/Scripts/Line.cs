@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Line : MonoBehaviour
+public class Line : MonoBehaviour, IObjectPooled
 {
     #region HEADER LINE PROPERTIES
     [Space(10)]
@@ -20,6 +20,7 @@ public class Line : MonoBehaviour
     public float lineRemovalSpeed = 0.01f;
     [Tooltip("How fast should the line header rotate towards the direction of the line")]
     public float lineHeadRotationSpeed = 1f;
+    [Tooltip("If line head rotatino is below this threshold, it won't change direction. if You choose low numbers, line header become more noisy")]
 
     [HideInInspector] public List<Vector3> inputPositions { get; set; }// points of the drawing line
     [HideInInspector] public List<float> timeIntervals { get; set; } // time interval between each point    
@@ -33,11 +34,20 @@ public class Line : MonoBehaviour
     private GameObject lineHead;
     private Vector3 previousPoint; // we keep last point position to know where to put the next point on our line in continueLineFlow function        
     private Camera mainCam;
+    private Quaternion toRotation;
 
-    private void Start()
+
+    public void OnSpawnObjectPooled()
     {
-        inputPositions = new List<Vector3>();
-        timeIntervals = new List<float>();
+        // initiation
+        if (inputPositions == null)
+        {
+            inputPositions = new List<Vector3>();
+        }
+        if (timeIntervals == null)
+        {
+            timeIntervals = new List<float>();
+        }
         mainCam = Camera.main;
 
         // we should clear the inputPosition & timeIntervals array
@@ -58,7 +68,7 @@ public class Line : MonoBehaviour
         timeIntervals.Add(0f);
         lastTime = Time.realtimeSinceStartup;
 
-        // we manually set lineRenderer first vertex position
+        // we manually set lineRenderer first vertex position        
         lineRenderer.SetPosition(0, inputPositions[0]);
 
         // setting previous point for the purpose of continueLineFlow
@@ -67,9 +77,33 @@ public class Line : MonoBehaviour
         UpdateEdgeCollider();
 
         // creating the line head
-        if (lineHeadPrefab != null)
+        if (lineHeadPrefab != null && lineHead == null)
         {
             lineHead = Instantiate(lineHeadPrefab, inputPositions[0], Quaternion.identity, gameObject.transform);
+        }
+        else
+        {
+            // lineHead.SetActive(true);
+        }
+
+        // now we activate the edgecollider on the line
+        edgeCollider2D.enabled = false;
+    }
+
+    public bool OnPoolingObject()
+    {
+        inputPositions.Clear();
+        timeIntervals.Clear();
+        lineRenderer.positionCount = 0;
+
+        return false;
+    }
+
+    private void Update()
+    {
+        if (toRotation != null && lineHead != null)
+        {
+            lineHead.transform.rotation = Quaternion.RotateTowards(lineHead.transform.rotation, toRotation, lineHeadRotationSpeed * Time.deltaTime);
         }
     }
 
@@ -187,11 +221,10 @@ public class Line : MonoBehaviour
     }
 
     public bool CanAddNewPoint(Vector3 here)
-    {        
+    {
         // cache inputPosition size
         int arraySize = inputPositions.Count;
-        Debug.Log($"can Add? {arraySize}");
-        
+
         // if don't have any points already, then we have accept the first point
         if (arraySize == 0)
         {
@@ -236,7 +269,8 @@ public class Line : MonoBehaviour
             float angle = Vector3.SignedAngle(new Vector3(0, 1, 0), direction, Vector3.forward);
 
             // setting position and rotation of line head
-            lineHead.transform.rotation = Quaternion.Slerp(lineHead.transform.rotation, Quaternion.Euler(0, 0, angle), lineHeadRotationSpeed);
+
+            toRotation = Quaternion.Euler(0, 0, angle);
             lineHead.transform.position = inputPositions[tmpSize - 1];
         }
         else

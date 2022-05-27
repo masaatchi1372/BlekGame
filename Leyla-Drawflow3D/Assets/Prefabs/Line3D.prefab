@@ -87,7 +87,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.18571281
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -95,8 +95,8 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.40524715
-        value: 0.63085115
+        time: 0.79740566
+        value: 0.47013795
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -186,12 +186,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad416b3c16b54a658166268270d76de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineHeadPrefab: {fileID: 9169954334807886738, guid: 000347f54437f4c13958b2017da9e632,
+  lineHeadPrefab: {fileID: 3844697925121076264, guid: eb208571dfab44772a26822299f07bba,
     type: 3}
   preferredPointsDistance: 0.01
-  lineLengthInPoints: 20
+  lineLengthInPoints: 15
   lineRemovalSpeed: 0.01
-  lineHeadRotationSpeed: 0.6
+  lineHeadRotationSpeed: 700
   lastTime: 0
   lastPointRemovalTime: 0
   shouldDestroy: 0

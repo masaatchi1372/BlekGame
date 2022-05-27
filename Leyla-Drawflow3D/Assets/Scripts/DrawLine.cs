@@ -4,26 +4,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DrawLine : MonoBehaviour
-{
-    #region Header Line Prefab
-    [Header("LINE PREFAB")]
-    #endregion
-    #region Tooltip
-    [Tooltip("should be populated with a prefab with LineRendere and EdgeCollider2D")]
-    #endregion
-    // The line prefab that we're going to be using in order to instantiate the user drawn path
-    public GameObject linePrefab;
+{    
     private GameObject currentLine;
     private List<GameObject> lineGameObjectsList;
     private Queue<GameObject> deletionQueue;
     private Camera mainCam;
+    private ObjectPooler objectPooler;
 
     private void Start()
     {
-        // initiating
+        // initiating and caching the frequent use variables
         lineGameObjectsList = new List<GameObject>();
         deletionQueue = new Queue<GameObject>();
+        objectPooler = ObjectPooler.Instance;
         mainCam = Camera.main;
+
+        // just for JIT prevention
+        var JITprevention = Input.touchCount;
     }
 
     void Update()
@@ -50,7 +47,7 @@ public class DrawLine : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && currentLine == null)
         {
             // Initiating the line
-            CreateLine();
+            SpawnLine();
         }
 
         // on Drag
@@ -106,8 +103,9 @@ public class DrawLine : MonoBehaviour
                     }
 
                     // if there's still one point on the line which user can see (it's in the screen) we should continue the line flow
-                    if (lineComponent.inputPositions.Count == 1 || !lineComponent.HasAtLeaseOnePointInScreen())
+                    if (lineComponent.inputPositions.Count < 3 || !lineComponent.HasAtLeaseOnePointInScreen())
                     {
+                        objectPooler.PoolObject("Line", line);
                         deletionQueue.Enqueue(line);
                         continue;
                     }
@@ -133,24 +131,17 @@ public class DrawLine : MonoBehaviour
     }
 
     // Starting line creation process
-    private void CreateLine()
+    private void SpawnLine()
     {
         // initiating current line with our prefab with no vertex on its lineRenderer
-        currentLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity);
-
-        // now we activate the edgecollider on the line
-        EdgeCollider2D edgeCollider2D;
-        currentLine.TryGetComponent<EdgeCollider2D>(out edgeCollider2D);
-        edgeCollider2D.enabled = false;
+        currentLine = objectPooler.SpawnFromPool("Line", Vector3.zero, Quaternion.identity);        
     }
 
     private void ClearDeletionQueue()
     {
         for (int i = 0; i < deletionQueue.Count; i++)
         {
-            var tmp = deletionQueue.Dequeue();
-            Destroy(tmp);
-            lineGameObjectsList.Remove(tmp);
+            lineGameObjectsList.Remove(deletionQueue.Dequeue());
         }
     }
 
@@ -161,7 +152,7 @@ public class DrawLine : MonoBehaviour
         {
             if (line != null)
             {
-                deletionQueue.Enqueue(line);
+                objectPooler.PoolObject("Line", line);
             }
         }
     }
