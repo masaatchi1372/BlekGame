@@ -296,13 +296,14 @@ public class Line : MonoBehaviour, IObjectPooled
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // if we hit ANYTHING we will disable the collider and line should be destroyed
-        edgeCollider2D.enabled = false;
-        shouldDestroy = true;
+        // // if we hit ANYTHING we will disable the collider and line should be destroyed
+        // edgeCollider2D.enabled = false;
+        // shouldDestroy = true;
 
         switch (other.gameObject.tag)
         {
             case "Obstacle":
+                Settings.shouldLose = true;
                 break;
             case "Enemy":
                 // we perform an attack if there's any attacking component on our line

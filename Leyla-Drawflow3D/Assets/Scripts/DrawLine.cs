@@ -44,10 +44,10 @@ public class DrawLine : MonoBehaviour
 
         // check for left mouse button or touch
         // we'll start a new line if one hasn't already in the scene
-        if (Input.GetMouseButtonDown(0) && currentLine == null)
+        if (Input.GetMouseButtonDown(0) && currentLine == null && (Settings.tryCount < Settings.triesAllowed))
         {
             // Initiating the line
-            SpawnLine();
+            SpawnLine();                        
         }
 
         // on Drag
@@ -83,6 +83,9 @@ public class DrawLine : MonoBehaviour
                 {
                     currentLineComponent.lastDrawnTime = Time.realtimeSinceStartup;
                 }
+
+                // increase the tryCount variable for gameManager
+                Settings.tryCount++;
             }
 
             // the line is created and there's no drawing in process
@@ -92,6 +95,9 @@ public class DrawLine : MonoBehaviour
         // each line should be continue its flow
         if (lineGameObjectsList.Count > 0)
         {
+            // we have an active line
+            Settings.hasActiveLine = true;
+
             foreach (GameObject line in lineGameObjectsList)
             {
                 if (line != null)
@@ -103,7 +109,7 @@ public class DrawLine : MonoBehaviour
                     }
 
                     // if there's still one point on the line which user can see (it's in the screen) we should continue the line flow
-                    if (lineComponent.inputPositions.Count < 3 || !lineComponent.HasAtLeaseOnePointInScreen())
+                    if (lineComponent.inputPositions.Count < 2 || !lineComponent.HasAtLeaseOnePointInScreen())
                     {
                         objectPooler.PoolObject("Line", line);
                         deletionQueue.Enqueue(line);
@@ -125,6 +131,12 @@ public class DrawLine : MonoBehaviour
                     }
                 }
             }
+        } 
+        
+        // we have no active line
+        if (currentLine == null && lineGameObjectsList.Count == 0)
+        {
+            Settings.hasActiveLine = false;
         }
 
         ClearDeletionQueue();

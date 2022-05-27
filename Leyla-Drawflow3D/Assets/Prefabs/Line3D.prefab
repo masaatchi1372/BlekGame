@@ -56,7 +56,6 @@ LineRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: d6cf9a1ef50cb4447a8412a73c2a1fe1, type: 2}
-  - {fileID: 2100000, guid: d84de31a451b3445c9320a3374f08f31, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -95,17 +94,17 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.79740566
-        value: 0.47013795
-        inSlope: 0
-        outSlope: 0
+        time: 0.4480099
+        value: 0.43839204
+        inSlope: 2.3247523
+        outSlope: 2.3247523
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0
+        inWeight: 0.3142363
         outWeight: 0
       - serializedVersion: 3
-        time: 0.99438477
-        value: 0.38778305
+        time: 1
+        value: 0.67350006
         inSlope: 0.39130443
         outSlope: 0.39130443
         tangentMode: 0
@@ -188,7 +187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineHeadPrefab: {fileID: 3844697925121076264, guid: eb208571dfab44772a26822299f07bba,
     type: 3}
-  preferredPointsDistance: 0.01
+  preferredPointsDistance: 0.03
   lineLengthInPoints: 15
   lineRemovalSpeed: 0.01
   lineHeadRotationSpeed: 700

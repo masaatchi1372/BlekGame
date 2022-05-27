@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public bool isLevel = false;
+    public int triesAllowed = 5;
     [Header("Enemies in the level")]
     [Tooltip("Enemies that user should destroy in this level")]
     [SerializeField] public List<BugBehaviour> bugs;
@@ -17,22 +18,39 @@ public class GameManager : MonoBehaviour
         if (isLevel)
         {
             GameState.isWin = false;
+            Settings.triesAllowed = triesAllowed;
+            Settings.tryCount = 0;
+            Settings.shouldLose = false;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isLevel && CheckEnemyCounts() == 0 && GameState.isWin == false) // we won
+        // it is a Level
+        if (isLevel)
         {
-            // we won
-            GameState.isWin = true;
-            GameState.userLevel++;
+            if (CheckEnemyCounts() == 0 && GameState.isWin == false) // we won
+            {
+                // we won
+                GameState.isWin = true;
+                GameState.userLevel++;
 
-            PlayerPrefs.SetInt("level", GameState.userLevel);
-            PlayerPrefs.Save();
+                PlayerPrefs.SetInt("level", GameState.userLevel);
+                PlayerPrefs.Save();
 
-            gotoScene("ResultScene");
+                gotoScene("ResultScene");
+            }
+            else if (Settings.shouldLose || (Settings.tryCount >= Settings.triesAllowed && !Settings.hasActiveLine)) // we lost
+            {
+                // we won
+                GameState.isWin = false;
+
+                PlayerPrefs.SetInt("level", GameState.userLevel);
+                PlayerPrefs.Save();
+
+                gotoScene("ResultScene");
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -79,6 +97,10 @@ public class GameManager : MonoBehaviour
 
     public void gotoLevel()
     {
+        if (GameState.userLevel == 0)
+        {
+            GameState.userLevel = 1;
+        }
         string nextSceneName = "Level " + GameState.userLevel;
         Debug.Log($"{nextSceneName}");
         if (Application.CanStreamedLevelBeLoaded(nextSceneName))

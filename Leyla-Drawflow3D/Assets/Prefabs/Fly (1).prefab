@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 8023270200389318749}
   - component: {fileID: -3127522809056490490}
   m_Layer: 0
-  m_Name: Fly
+  m_Name: Fly (1)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
