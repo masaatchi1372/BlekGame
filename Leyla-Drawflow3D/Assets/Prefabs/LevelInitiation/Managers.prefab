@@ -48,7 +48,7 @@ MonoBehaviour:
   - tag: Line
     prefab: {fileID: 5977152468758313169, guid: a3ab0ebe323ea4e8f8d7026a9893cb64,
       type: 3}
-    size: 5
+    size: 30
 --- !u!1 &6437614318291361138
 GameObject:
   m_ObjectHideFlags: 0

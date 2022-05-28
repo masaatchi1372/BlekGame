@@ -889,7 +889,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6104c401c6e02482aa451adc31df54d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.2
+  speed: 0.15
   followee: {fileID: 1109128508}
 --- !u!4 &1671060628
 Transform:
