@@ -667,7 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6104c401c6e02482aa451adc31df54d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.5
+  speed: 0.2
   followee: {fileID: 925552727}
 --- !u!4 &851883650
 Transform:
@@ -1388,7 +1388,7 @@ PrefabInstance:
     - target: {fileID: 6437614318291361139, guid: 6ad02fec3b55e4692aacb231a4851638,
         type: 3}
       propertyPath: triesAllowed
-      value: 1
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 6437614318291361139, guid: 6ad02fec3b55e4692aacb231a4851638,
         type: 3}
