@@ -13,6 +13,7 @@ allprojects {
             classpath 'com.android.tools.build:gradle:3.4.3'
             **BUILD_SCRIPT_DEPS**
         }
+                    
     }
 
     repositories {**ARTIFACTORYREPOSITORY**
@@ -22,6 +23,7 @@ allprojects {
             dirs "${project(':unityLibrary').projectDir}/libs"
         }
     }
+
 }
 
 task clean(type: Delete) {
